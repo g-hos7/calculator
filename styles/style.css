@@ -6,7 +6,7 @@
 html {
   margin: 0;
   padding: 0;
-  background: linear-gradient(#7be2fc, #63e763);}
+  background: linear-gradient(#4fdcff, #d34497);}
 
 body {
   width: 100vw;
@@ -38,8 +38,11 @@ body {
   font-weight: bold;
   font-family: 'Courier New', Courier, monospace;
   align-self: flex-start;
-  margin: 0.8em 0em 0em 1.3em;
+  margin: 0.8em 0em 0em 1.5em;
+  padding: 0.2em 0.2em 0em 0.2em;
   color: rgb(218, 85, 61);
+  border: solid 0.15em rgb(218, 85, 61);
+  border-radius: 0.6em;
 }
 
 #display {
@@ -107,15 +110,19 @@ button:hover, button:focus {
   outline: none;
 }
 
-.sideBtns {
+.sideBtns, #equals {
   color: white;
   background-color: tomato;
 }
 
-.sideBtns:hover, .sideBtns:focus {
+.sideBtns:hover, .sideBtns:focus, #equals:hover, #equals:focus {
   background-color:  white;
   color: tomato;
   outline: none;
+}
+
+#backspace {
+  font-size: 50pt;
 }
 
 #zero {
