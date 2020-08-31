@@ -1,16 +1,40 @@
 const display = document.querySelector('#display');
 const number = document.createElement('div');
+number.innerText = '0';
 display.appendChild(number).id = 'text';
+
+function displayTrim(display) {
+  let currDisplay = display.innerText;
+  if(currDisplay.length > 12) {
+    display.innerText = currDisplay.substring(0, 12);
+  }
+}
 
 function numberSelect(display) {
   document.querySelectorAll('.num').forEach((btn) => {
     btn.addEventListener('click', () => {
-      display.innerText += btn.innerText;
+      if(display.innerText === '0') {
+        display.innerText = btn.innerText;
+      } else {
+        display.innerText += btn.innerText;
+      }
+      displayTrim(display);
     });
   });
 }
 
-function backspace(display) {
+function periodSelect(display, num1) {
+  document.querySelector('#period').addEventListener('click', () => {
+    if(!num1 === NaN) {
+      display.innerText = '0'
+      display.innerText += '.';
+    } else if(!display.innerText.includes('.')) {
+      display.innerText += '.';
+    }
+  });
+}
+
+function backspaceSelect(display) {
   document.querySelector('#backspace').addEventListener('click', () => {
     display.innerText = display.innerText.replace(/.$/, '');
   });
@@ -18,19 +42,22 @@ function backspace(display) {
 
 function clearSelect(display) {
   document.querySelector('#clear').addEventListener('click', () => {
-    display.innerText = '';
+    display.innerText = '0';
     operator = '';
     num1 = NaN;
   });
 }
 
+function percentSelect(display) {
+  document.querySelector('#percent').addEventListener('click', () => {
+    let num = parseFloat(display.innerText);
+    display.innerText = num / 100;
+  });
+}
+
 function signSelect(display) {
   document.querySelector('#sign').addEventListener('click', () => {
-    if(display.innerText.includes('-')) {
-      display.innerText = display.innerText.replace('-', '');
-    } else {
-      display.innerText = '-' + display.innerText;
-    }
+    display.innerText = parseFloat(display.innerText) * -1;
   });
 }
 
@@ -44,7 +71,7 @@ function operatorSelect(display) {
   });
 }
 
-function equalSelect(display) {
+function equalSelect(display, num1) {
   document.querySelector('#equals').addEventListener('click', () => {
     display.innerText = operate(operator, num1, parseFloat(display.innerText));
   });
@@ -101,10 +128,12 @@ function calculate() {
   let operator = '';
   signSelect(number);
   numberSelect(number);
-  backspace(number);
+  periodSelect(number, num1);
+  backspaceSelect(number);
+  percentSelect(number);
   clearSelect(number);
   operatorSelect(number);
-  equalSelect(number);
+  equalSelect(number, num1);
 }
 
 calculate();
