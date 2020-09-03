@@ -73,9 +73,9 @@ body {
   display: grid;
   width: 440px;
   height: 530px;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  grid-gap: 0.9em;
+  grid-template-columns: repeat(4, 100px);
+  grid-template-rows: repeat(5, 95px);
+  grid-gap: 13px;
 }
 
 button {
