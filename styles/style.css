@@ -72,8 +72,8 @@ body {
 
 #buttons {
   display: grid;
-  width: 82%;
-  height: 69%;
+  width: 440px;
+  height: 530px;
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(5, 1fr);
   grid-gap: 0.9em;

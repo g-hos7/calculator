@@ -1,84 +1,160 @@
-const display = document.querySelector('#display');
-const number = document.createElement('div');
-number.innerText = '0';
-display.appendChild(number).id = 'text';
+let display = '0';
+let num1 = null;
+let num2 = null;
+let op1 = null;
+let op2 = null;
+let result = null;
+const calcButtons = document.querySelectorAll('button');
 
-function displayTrim(display) {
-  let currDisplay = display.innerText;
-  if(currDisplay.length > 12) {
-    display.innerText = currDisplay.substring(0, 12);
+refreshDisplay();
+handleButtons();
+
+function roundNum(num, decimals) {
+  return parseFloat(Math.round(num + 'e' + decimals) + 'e-' + decimals);
+}
+
+function refreshDisplay() {
+  const displayText = document.querySelector('#text');
+  displayText.innerText = display;
+  if(display.length > 12) {
+    displayText.innerText = display.substring(0, 12);
   }
 }
 
-function numberSelect(display) {
-  document.querySelectorAll('.num').forEach((btn) => {
+function handleButtons() {
+  calcButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
-      if(display.innerText === '0') {
-        display.innerText = btn.innerText;
-      } else {
-        display.innerText += btn.innerText;
+      if(btn.classList.contains('num')) {
+        numberSelect(btn.value);
+        refreshDisplay();
+      } else if(btn.classList.contains('sideBtns')) {
+        operatorSelect(btn.id);
+      } else if(btn.id === 'equals') {
+        equalSelect();
+        refreshDisplay();
+      } else if(btn.id === 'clear') {
+        clearSelect();
+        refreshDisplay();
+      } else if(btn.id === 'backspace') {
+        backspaceSelect();
+        refreshDisplay();
+      } else if(btn.id === 'period') {
+        periodSelect()
+        refreshDisplay();
+      } else if(btn.id === 'sign') {
+        signSelect(display);
+        refreshDisplay();
+      } else if(btn.id === 'percent') {
+        percentSelect(display);
+        refreshDisplay(); 
       }
-      displayTrim(display);
     });
   });
 }
 
-function periodSelect(display, num1) {
-  document.querySelector('#period').addEventListener('click', () => {
-    if(!num1 === NaN) {
-      display.innerText = '0'
-      display.innerText += '.';
-    } else if(!display.innerText.includes('.')) {
-      display.innerText += '.';
+function numberSelect(number) {
+  if(op1 === null) {
+    if(display === '0' || display === 0) {
+      display = number;
+    } else if(display === num1) {
+      display = number;
+    } else {
+      display += number;
     }
-  });
+  } else {
+    if(display === num1) {
+      display = number;
+    } else {
+      display += number;
+    }
+  }
 }
 
-function backspaceSelect(display) {
-  document.querySelector('#backspace').addEventListener('click', () => {
-    display.innerText = display.innerText.replace(/.$/, '');
-  });
+function periodSelect() {
+  if(display === num1 || display === num2) {
+    display = '0';
+    display += '.'
+  } else if(!display.includes('.')) {
+    display += '.';
+  }
 }
 
-function clearSelect(display) {
-  document.querySelector('#clear').addEventListener('click', () => {
-    display.innerText = '0';
-    operator = '';
-    num1 = NaN;
-  });
+function backspaceSelect() {
+  display = display.replace(/.$/, '');
 }
 
-function percentSelect(display) {
-  document.querySelector('#percent').addEventListener('click', () => {
-    let num = parseFloat(display.innerText);
-    display.innerText = num / 100;
-  });
+function clearSelect() {
+  display = '0';
+  num1 = null;
+  num2 = null;
+  op1 = null;
+  op2 = null;
+  result = null;
 }
 
-function signSelect(display) {
-  document.querySelector('#sign').addEventListener('click', () => {
-    display.innerText = parseFloat(display.innerText) * -1;
-  });
+function percentSelect(number) {
+  display = (number / 100).toString();
 }
 
-function operatorSelect(display) {
-  document.querySelectorAll('.sideBtns').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      operator = btn.id;
-      num1 = parseFloat(display.innerText);
-      display.innerText = '';
-    });
-  });
+function signSelect(number) {
+ display = (number * -1).toString();
 }
 
-function equalSelect(display, num1) {
-  document.querySelector('#equals').addEventListener('click', () => {
-    display.innerText = operate(operator, num1, parseFloat(display.innerText));
-  });
+function operatorSelect(operator) {
+  if(op1 !== null && op2 === null) {
+    op2 = operator;
+    num2 = display;
+    result = operate(op1 ,Number(num1), Number(num2));
+    display = roundNum(result, 15).toString();
+    num1 = display;
+    result = null;
+  } else if(op1 !== null && op2 !== null) {
+    op2 = display;
+    result = operate(op2, Number(num1), Number(num2));
+    op2 = operator;
+    display = roudnNum(result, 15).toString();
+    num1 = display;
+    result = null;
+  } else {
+    op1 = operator;
+    num1 = display;
+  }
+}
+
+function equalSelect() {
+  if(op1 === null) {
+    display = display;
+  } else if(op2 !== null) {
+    num2 = display;
+    result = operate(op2, Number(num1), Number(num2));
+    if(result === 'DIVISION ERR') {
+      display = 'DIVISION ERR';
+    } else {
+      display = roundNum(result, 15).toString();
+      num1 = display;
+      num2 =  null;
+      op1 = null;
+      op2 = null;
+      result = null;
+    }
+  } else {
+    num2 = display;
+    result = operate(op1, Number(num1), Number(num2));
+    if(result === 'DIVISION ERR') {
+      display = 'DIVISION ERR';
+    } else {
+      display = roundNum(result, 15).toString();
+      num1 = display;
+      num2 =  null;
+      op1 = null;
+      op2 = null;
+      result = null;
+    }
+  }
 }
 
 function operate(operator, num1, num2) {
-  let result = 0;
+  let result = '0';
   switch(operator) {
     case "add":
       result = add(num1, num2);
@@ -96,11 +172,7 @@ function operate(operator, num1, num2) {
       console.log(operator);
       result = "ERROR"
   }
-  if(typeof result === "string") {
-    return result;
-  } else {
-    return result.toFixed(2);
-  }
+  return result;
 }
 
 function add(num1, num2) {
@@ -117,23 +189,8 @@ function multiply(num1, num2) {
 
 function divide(num1, num2) {
   if(num2 === 0) {
-    return "DIVISION ERROR";
+    return "DIVISION ERR";
   } else {
     return num1 / num2;
   }
 }
-
-function calculate() {
-  let num1 = NaN;
-  let operator = '';
-  signSelect(number);
-  numberSelect(number);
-  periodSelect(number, num1);
-  backspaceSelect(number);
-  percentSelect(number);
-  clearSelect(number);
-  operatorSelect(number);
-  equalSelect(number, num1);
-}
-
-calculate();
